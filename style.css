@@ -1,0 +1,1567 @@
+
+/* =====================================================
+   1. PENGATURAN DASAR
+===================================================== */
+
+:root {
+  --blue: #4054bd;
+  --blue-dark: #30439f;
+  --blue-light: #eaf0fa;
+  --blue-soft: #f1f4fc;
+
+  --text: #26324b;
+  --muted: #7b8498;
+
+  --background: #f4f6fb;
+  --white: #ffffff;
+
+  --border: #e3e7f0;
+  --danger: #dc4c4c;
+  --success: #299b69;
+
+  --radius: 16px;
+  --shadow: 0 5px 20px rgba(39, 55, 105, 0.07);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input,
+select,
+textarea {
+  outline: none;
+}
+
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.screen {
+  width: 100%;
+  min-height: calc(100vh - 40px);
+}
+
+.screen.hidden {
+  display: none !important;
+}
+
+
+/* =====================================================
+   2. HEADER DAN TOMBOL KEMBALI
+===================================================== */
+
+.topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--blue);
+  font-size: 22px;
+  box-shadow: var(--shadow);
+  transition: 0.2s;
+}
+
+.icon-button:hover {
+  background: var(--blue-light);
+}
+
+
+/* =====================================================
+   3. LAYOUT UTAMA
+===================================================== */
+
+.screen-layout {
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.layout-main,
+.layout-side {
+  min-width: 0;
+}
+
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.panel h1,
+.panel h2,
+.panel h3 {
+  color: var(--text);
+  margin-bottom: 15px;
+}
+
+.panel p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.section-pill,
+.machine-title {
+  width: fit-content;
+  margin: 0 auto 25px;
+  padding: 12px 25px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* =====================================================
+   4. BERANDA KASIR DAN ADMIN
+===================================================== */
+
+.home-layout {
+  min-height: 75vh;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.85fr);
+  align-items: center;
+}
+
+.chart-panel {
+  min-height: 390px;
+}
+
+.chart-panel h2 {
+  font-size: 22px;
+}
+
+.chart-panel canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.home-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 30px;
+}
+
+.home-panel h1 {
+  font-size: 27px;
+  text-align: center;
+  margin-bottom: 0;
+  color: var(--blue);
+}
+
+.home-panel .login-subtitle {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.primary-button {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 12px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.primary-button:hover {
+  background: var(--blue-dark);
+}
+
+.primary-button.pale {
+  background: var(--blue-light);
+  color: var(--blue);
+}
+
+.primary-button.pale:hover {
+  background: #dce5f8;
+}
+
+.home-date-button {
+  width: 100%;
+  min-height: 43px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--blue-soft);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.visually-hidden-date {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.small-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.small-icon:hover {
+  background: var(--blue);
+  color: var(--white);
+}
+
+
+/* =====================================================
+   5. LOGIN
+===================================================== */
+
+#adminLoginScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 90px);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 430px;
+  margin: auto;
+}
+
+.login-panel {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.login-panel h1 {
+  text-align: center;
+  color: var(--blue);
+  font-size: 29px;
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-input-group {
+  margin-bottom: 18px;
+}
+
+.login-input-group label,
+.admin-panel label,
+.report-filter label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.login-input-group input {
+  width: 100%;
+  height: 46px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.login-input-group input:focus,
+.admin-panel input:focus,
+.report-filter input:focus,
+.search-bar input:focus {
+  border-color: var(--blue);
+}
+
+.login-message {
+  color: var(--danger);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.login-submit {
+  margin-top: 5px;
+}
+
+
+/* =====================================================
+   6. KATALOG BARANG
+===================================================== */
+
+.catalog-layout {
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.7fr);
+}
+
+.search-bar {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  height: 48px;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 15px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.product-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.product-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.product-card p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.product-card button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.catalog-side .panel {
+  position: sticky;
+  top: 20px;
+}
+
+.floating-cart {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+
+/* =====================================================
+   7. KERANJANG
+===================================================== */
+
+.cart-layout {
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+}
+
+.cart-heading {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cart-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.cart-checkout {
+  position: sticky;
+  top: 20px;
+}
+
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-summary strong {
+  color: var(--blue);
+  font-size: 23px;
+}
+
+.cart-checkout h3 {
+  margin-bottom: 14px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finish-button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  background: var(--success);
+  color: var(--white);
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.tiny {
+  font-size: 12px;
+}
+
+.center {
+  text-align: center;
+}
+
+.cart-checkout .muted {
+  margin-top: 14px;
+}
+
+
+/* =====================================================
+   8. MENU TOKO MESIN
+===================================================== */
+
+.machine-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.machine-menu button {
+  width: 100%;
+  padding: 17px;
+  background: var(--blue);
+  color: var(--white);
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.machine-menu button:hover {
+  background: var(--blue-dark);
+}
+
+/* =====================================================
+   9. TAGIHAN
+===================================================== */
+
+.bill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.bill-item,
+.bill-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: 0.2s ease;
+}
+
+.bill-item:hover,
+.bill-card:hover {
+    border-color: var(--blue-light);
+    box-shadow: 0 8px 22px rgba(64, 84, 189, 0.10);
+    transform: translateY(-2px);
+}
+
+.bill-card h3 {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.bill-card p {
+    margin: 7px 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.bill-card p:last-child {
+    margin-top: 14px;
+    color: var(--blue);
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.bill-card button {
+    flex-shrink: 0;
+    min-width: 120px;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.bill-card button:hover {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+}
+
+.bill-cart {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.bill-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.bill-detail-item {
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.bill-payment {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bill-payment-method {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bill-method {
+    padding: 13px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.bill-method.active {
+    background: var(--blue);
+    color: var(--white);
+}
+
+.bill-finish {
+    width: 100%;
+    padding: 14px;
+    background: var(--success);
+    color: var(--white);
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .bill-item,
+    .bill-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bill-card button {
+        width: 100%;
+    }
+}
+
+/* DETAIL TAGIHAN */
+.bill-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.bill-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 18px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.bill-detail-item label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.bill-detail-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--blue);
+    cursor: pointer;
+}
+
+.bill-detail-item p {
+    margin: 0 0 0 30px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.bill-detail-item p:last-child {
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* =====================================================
+   10. TRANSAKSI BERHASIL
+===================================================== */
+
+.success-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-content {
+  width: 100%;
+  max-width: 430px;
+  padding: 35px;
+  background: var(--white);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.success-content h2 {
+  color: var(--success);
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.success-illustration {
+  font-size: 42px;
+  margin: 25px 0;
+}
+
+.success-content p {
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+
+.success-content strong {
+  display: block;
+  margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   11. LAPORAN
+===================================================== */
+
+.report-layout {
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.75fr);
+}
+
+.report-panel {
+  min-height: 300px;
+}
+
+.report-total {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.report-total span {
+  color: var(--muted);
+}
+
+.report-total strong {
+  font-size: 27px;
+  color: var(--blue);
+}
+
+.report-filter {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.report-filter input {
+  width: 100%;
+  height: 44px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+
+#transactionList,
+#machineTransactionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-item {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--white);
+}
+
+
+/* Kotak laporan per hari */
+.report-day-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+}
+
+/* Bagian tanggal dan total */
+.report-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* Rincian pembayaran */
+.report-day-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 13px;
+}
+
+.report-day-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.report-day-item strong {
+    color: var(--text);
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .report-day-card {
+        padding: 15px;
+    }
+
+    .report-day-header {
+        font-size: 12px;
+    }
+}
+
+
+/* =====================================================
+   12. MENU ADMIN DAN UPDATE BARANG
+===================================================== */
+
+.admin-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-menu button {
+  width: 100%;
+  padding: 15px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border-radius: 11px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.admin-menu button:hover {
+  background: var(--blue);
+  color: var(--white);
+}
+
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-panel h3 {
+  margin-bottom: 12px;
+}
+
+.admin-panel input:not([type="file"]):not([type="hidden"]) {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  margin-bottom: 8px;
+}
+
+.admin-panel input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 9px;
+  margin-bottom: 12px;
+}
+
+#adminProductList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-product-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.admin-product-item img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.admin-product-item button {
+  padding: 9px 12px;
+  border-radius: 8px;
+}
+
+/* =====================================================
+   13. NOTA PEMBELIAN
+===================================================== */
+
+#receiptList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.receipt-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.receipt-item strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.receipt-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.receipt-item a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 11px 17px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.receipt-item a:hover {
+    background: var(--blue);
+    color: var(--white);
+}
+
+.receipt-item img {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    max-height: 250px;
+    object-fit: contain;
+    margin-top: 12px;
+    border-radius: 10px;
+}
+
+/* Panel daftar nota */
+#dataNotaScreen .layout-main .panel {
+    border-radius: 16px;
+    padding: 22px;
+}
+
+/* Panel informasi nota */
+#dataNotaScreen .layout-side .panel {
+    border-radius: 16px;
+    padding: 22px;
+    background: linear-gradient(
+        145deg,
+        var(--white),
+        var(--blue-light)
+    );
+}
+
+#dataNotaScreen .layout-side .panel h3 {
+    color: var(--blue);
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+#dataNotaScreen .layout-side .panel p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .receipt-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .receipt-item a {
+        width: 100%;
+    }
+}
+
+/* =====================================================
+   14. TOMBOL DAN STATUS
+===================================================== */
+
+button:hover {
+  transition: 0.2s;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: calc(100% - 30px);
+  padding: 13px 20px;
+  background: var(--text);
+  color: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+
+/* =====================================================
+   15. RESPONSIVE TABLET
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .screen-layout,
+  .home-layout,
+  .catalog-layout,
+  .cart-layout,
+  .report-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-layout {
+    align-items: stretch;
+  }
+
+  .chart-panel {
+    min-height: 300px;
+  }
+
+  .catalog-side .panel,
+  .cart-checkout {
+    position: static;
+  }
+
+  .layout-side {
+    width: 100%;
+  }
+
+}
+
+
+/* =====================================================
+   16. RESPONSIVE HP
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .app-shell {
+    padding: 12px;
+  }
+
+  .screen {
+    min-height: calc(100vh - 24px);
+  }
+
+  .topbar {
+    margin-bottom: 12px;
+  }
+
+  .screen-layout {
+    gap: 16px;
+  }
+
+  .panel {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .home-panel {
+    padding: 22px;
+  }
+
+  .home-panel h1 {
+    font-size: 23px;
+  }
+
+  .chart-panel {
+    min-height: 250px;
+  }
+
+  .chart-panel h2 {
+    font-size: 19px;
+  }
+
+  .section-pill,
+  .machine-title {
+    font-size: 14px;
+    padding: 10px 20px;
+    margin-bottom: 18px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .product-card {
+    padding: 10px;
+  }
+
+  .product-card img {
+    height: 105px;
+  }
+
+  .product-card h3 {
+    font-size: 13px;
+  }
+
+  .login-panel {
+    padding: 25px 20px;
+  }
+
+  .login-panel h1 {
+    font-size: 24px;
+  }
+
+  .success-content {
+    padding: 25px 20px;
+  }
+
+  .success-content h2 {
+    font-size: 26px;
+  }
+
+}
+
+
+/* =====================================================
+   17. RESPONSIVE HP KECIL
+===================================================== */
+
+@media (max-width: 360px) {
+
+  .app-shell {
+    padding: 9px;
+  }
+
+  .home-panel {
+    padding: 17px;
+  }
+
+  .home-panel h1 {
+    font-size: 21px;
+  }
+
+  .primary-button {
+    font-size: 13px;
+    padding: 11px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .product-card img {
+    height: 85px;
+  }
+
+  .login-panel {
+    padding: 20px 15px;
+  }
+
+}
+
+
+/* =====================================================
+   18. PENYEMPURNAAN DESAIN KATALOG BARANG
+===================================================== */
+
+.catalog-layout .layout-main > .panel {
+  padding: 28px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff, #f9faff);
+}
+
+.catalog-layout .panel h2,
+.catalog-layout .panel h3 {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  color: #30439f;
+}
+
+.search-bar input {
+  height: 52px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: #f8f9fd;
+  font-size: 14px;
+  transition: 0.25s;
+}
+
+.search-bar input:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(64, 84, 189, 0.09);
+}
+
+.product-grid {
+  gap: 19px;
+}
+
+.product-card {
+  position: relative;
+  padding: 16px;
+  border: 1px solid #e9ecf5;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(39, 55, 105, 0.045);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(39, 55, 105, 0.11);
+  border-color: #cbd4f3;
+}
+
+.product-card img {
+  height: 145px;
+  padding: 10px;
+  background: #f5f7fd;
+  border-radius: 14px;
+  object-fit: contain;
+}
+
+.product-card h3 {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: -0.3px;
+  color: #29365a;
+}
+
+.product-card p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #828ba2;
+}
+
+.product-card button {
+  min-height: 40px;
+  padding: 10px;
+  border-radius: 11px;
+  background: #4054bd;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.product-card button:hover {
+  background: #30439f;
+  box-shadow: 0 5px 12px rgba(64, 84, 189, 0.2);
+}
+
+
+/* =====================================================
+   19. PENYEMPURNAAN KOLOM TRANSAKSI
+===================================================== */
+
+.catalog-side .panel,
+.cart-checkout {
+  padding: 25px;
+  border: 1px solid #e5e9f4;
+  border-radius: 20px;
+  background: linear-gradient(155deg, #ffffff, #f8f9fe);
+  box-shadow: 0 8px 25px rgba(39, 55, 105, 0.07);
+}
+
+.catalog-side .panel h2,
+.catalog-side .panel h3,
+.cart-checkout h3 {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: #30439f;
+}
+
+.cart-heading {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: #30439f;
+}
+
+.cart-items {
+  gap: 15px;
+}
+
+.cart-item {
+  padding: 19px;
+  border: 1px solid #e8ebf4;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 3px 12px rgba(39, 55, 105, 0.04);
+  transition: 0.2s;
+}
+
+.cart-item:hover {
+  border-color: #cbd4f3;
+  box-shadow: 0 6px 17px rgba(39, 55, 105, 0.08);
+}
+
+.cart-summary {
+  padding: 18px;
+  background: #eef2ff;
+  border: 1px solid #e0e6fb;
+  border-radius: 14px;
+}
+
+.cart-summary strong {
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 25px;
+  font-weight: 900;
+  color: #4054bd;
+}
+
+.payment-options {
+  gap: 12px;
+}
+
+.payment-options button {
+  min-height: 45px;
+  padding: 12px;
+  border: 1px solid #e0e5f2;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #405078;
+  font-size: 13px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.payment-options button:hover {
+  border-color: #4054bd;
+  background: #eef2ff;
+}
+
+.finish-button {
+  min-height: 51px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 5px 14px rgba(41, 155, 105, 0.15);
+  transition: 0.25s;
+}
+
+.finish-button:hover {
+  background: #208257;
+  transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   20. TIPOGRAFI DAN DETAIL
+===================================================== */
+
+.catalog-layout,
+.cart-layout {
+  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+}
+
+.catalog-layout .panel p,
+.cart-layout .panel p {
+  line-height: 1.7;
+}
+
+.catalog-layout button,
+.cart-layout button {
+  letter-spacing: 0.15px;
+}
+
+.catalog-layout .floating-cart {
+  min-height: 49px;
+  border-radius: 13px;
+  font-size: 14px;
+  box-shadow: 0 5px 14px rgba(64, 84, 189, 0.17);
+  transition: 0.2s;
+}
+
+.catalog-layout .floating-cart:hover {
+  background: #30439f;
+  transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   21. RESPONSIVE TAMBAHAN
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .catalog-layout .layout-main > .panel {
+    padding: 17px;
+  }
+
+  .product-card {
+    padding: 11px;
+    border-radius: 15px;
+  }
+
+  .product-card img {
+    height: 110px;
+  }
+
+  .catalog-side .panel,
+  .cart-checkout {
+    padding: 19px;
+    border-radius: 16px;
+  }
+
+  .cart-item {
+    padding: 14px;
+  }
+
+}
+
+/* =========================================
+   TOMBOL JUMLAH BARANG - MODEL LAMA
+========================================= */
+
+/* Tombol jumlah di katalog */
+/* Tombol TAMBAH sebelum masuk keranjang */
+.product-card button {
+    width: fit-content;
+    min-height: 32px;
+    padding: 6px 20px;
+    font-size: 5px;
+    border-radius: 9px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Tombol - 1 + setelah masuk keranjang */
+.quick-quantity {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    margin: 12px auto 0;
+}
+
+.quick-quantity button {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-size: 17px;
+}
+
+/* Tombol jumlah di keranjang */
+.cart-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-actions button:not([data-remove]) {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cart-actions button:not([data-remove]):hover {
+    background: var(--blue);
+    color: white;
+}
+
