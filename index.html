@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4054bd">
+  <title>Toko Sinar Mulya</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<main class="app-shell">
+
+  <header class="topbar">
+    <button class="icon-button" id="backButton" aria-label="Kembali">←</button>
+  </header>
+
+
+  <!-- HALAMAN LOGIN -->
+  <section id="adminLoginScreen" class="screen">
+    <div class="login-container">
+      <div class="login-panel">
+
+        <h1>Toko Sinar Mulya</h1>
+        <p class="login-subtitle">Silakan masuk ke akun Anda</p>
+
+        <form id="loginForm">
+
+          <div class="login-input-group">
+            <label for="loginUsername">Username</label>
+            <input
+              type="text"
+              id="loginUsername"
+              name="username"
+              placeholder="Masukkan username"
+              required
+            >
+          </div>
+
+          <div class="login-input-group">
+            <label for="loginPassword">Password</label>
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              placeholder="Masukkan password"
+              required
+            >
+          </div>
+
+          <p id="adminLoginMessage" class="login-message"></p>
+
+          <button type="submit" class="primary-button login-submit">
+            Masuk
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- BERANDA KASIR -->
+  <section id="homeScreenKasir" class="screen hidden">
+    <div class="screen-layout home-layout">
+
+      <div class="layout-main">
+        <section class="panel chart-panel">
+          <h2>Grafik Penjualan</h2>
+          <canvas id="salesChartKasir" height="180"></canvas>
+        </section>
+      </div>
+
+      <div class="layout-side">
+        <section class="panel home-panel">
+          <h1>Toko Sinar Mulya</h1>
+          <p class="login-subtitle">Beranda Kasir</p>
+
+          <button class="primary-button pale" id="machineButtonKasir">
+            Transaksi Toko Mesin
+          </button>
+
+          <button class="primary-button" id="generalButtonKasir">
+            Transaksi Umum
+          </button>
+
+          <button class="home-date-button" id="homeDateButtonKasir" type="button">
+            <span id="homeDateTextKasir"></span>
+            <span aria-hidden="true">✎</span>
+          </button>
+
+          <input
+            id="datePickerKasir"
+            class="visually-hidden-date"
+            type="date"
+            aria-label="Pilih tanggal transaksi"
+          >
+
+          <div class="home-footer">
+            <button
+              class="small-icon"
+              id="kasirLogoutButton"
+              title="Keluar"
+              aria-label="Keluar"
+            >↪</button>
+          </div>
+
+        </section>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- BERANDA ADMIN -->
+  <section id="homeScreenAdmin" class="screen hidden">
+    <div class="screen-layout home-layout">
+
+      <div class="layout-main">
+        <section class="panel chart-panel">
+          <h2>Grafik Penjualan</h2>
+          <canvas id="salesChartAdmin" height="180"></canvas>
+        </section>
+      </div>
+
+      <div class="layout-side">
+        <section class="panel home-panel">
+          <h1>Toko Sinar Mulya</h1>
+          <p class="login-subtitle">Beranda Admin</p>
+
+          <button class="primary-button pale" id="machineButtonAdmin">
+            Transaksi Toko Mesin
+          </button>
+
+          <button class="primary-button" id="generalButtonAdmin">
+            Transaksi Umum
+          </button>
+
+          <button class="primary-button" id="updateProductButtonAdmin">
+            Update Barang
+          </button>
+
+          <button class="primary-button" id="generalReportButtonAdmin">
+            Laporan Penjualan Umum
+          </button>
+
+          <button class="primary-button" id="machineReportButtonAdmin">
+            Laporan Toko Mesin
+          </button>
+
+          <button class="home-date-button" id="homeDateButtonAdmin" type="button">
+            <span id="homeDateTextAdmin"></span>
+            <span aria-hidden="true">✎</span>
+          </button>
+
+          <input
+            id="datePickerAdmin"
+            class="visually-hidden-date"
+            type="date"
+            aria-label="Pilih tanggal transaksi"
+          >
+
+          <div class="home-footer">
+            <button
+              class="small-icon"
+              id="adminLogoutButton"
+              title="Keluar dari Akun"
+              aria-label="Keluar dari Akun"
+            >↪</button>
+          </div>
+
+        </section>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- KATALOG -->
+  <section id="catalogScreen" class="screen hidden">
+    <div class="section-pill" id="catalogTitle">Transaksi Umum</div>
+
+    <div class="screen-layout catalog-layout">
+
+      <div class="layout-main">
+        <label class="search-bar">
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Cari berdasarkan nama barang ..."
+          >
+        </label>
+
+        <div id="productGrid" class="product-grid"></div>
+      </div>
+
+      <div class="layout-side catalog-side">
+        <div class="panel">
+          <h3>Keranjang Belanja</h3>
+          <p>Silakan pilih barang yang ingin dibeli.</p>
+
+          <button
+            id="openCartButton"
+            class="floating-cart"
+            aria-label="Buka keranjang"
+          >
+            🛒 Buka Keranjang (<b id="cartCount">0</b>)
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- KERANJANG -->
+  <section id="cartScreen" class="screen hidden">
+    <div class="section-pill" id="cartTitle">Transaksi Umum</div>
+
+    <div class="screen-layout cart-layout">
+
+      <div class="layout-main">
+        <div class="cart-heading">🛒 <span>Keranjang Belanja</span></div>
+        <div id="cartItems" class="cart-items"></div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel cart-checkout">
+
+          <div class="cart-summary">
+            <span>Total</span>
+            <strong id="cartTotal">Rp0</strong>
+          </div>
+
+          <h3>Metode Pembayaran</h3>
+
+          <div class="payment-options">
+            <button class="primary-button" data-payment="Tunai">Tunai</button>
+            <button class="primary-button" data-payment="Transfer">Transfer</button>
+            <button
+              class="primary-button hidden"
+              id="debtPaymentButton"
+              data-payment="Utang"
+            >Utang</button>
+          </div>
+
+          <button class="finish-button" id="finishButton" disabled>
+            Transaksi Selesai
+          </button>
+
+          <p class="muted tiny center">
+            Pilih metode pembayaran sebelum menyelesaikan transaksi.
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- MENU TOKO MESIN -->
+  <section id="machineMenuScreen" class="screen hidden">
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h2>Transaksi Toko Mesin</h2>
+          <p>Pilih menu yang ingin dilakukan.</p>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="machine-menu">
+          <button id="billOption">Pembayaran Tagihan</button>
+          <button id="newMachineOption">Transaksi Baru</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DAFTAR TAGIHAN -->
+  <section id="billListScreen" class="screen hidden">
+    <div class="machine-title">Pembayaran Tagihan</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div id="billList" class="bill-list"></div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel">
+          <h3>Daftar Tagihan</h3>
+          <p>Periksa tagihan yang belum lunas.</p>
+
+          <button id="billCartButton" class="bill-cart">
+            🛒 Jumlah Tagihan: <span id="billCount">0</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DETAIL TAGIHAN -->
+  <section id="billDetailScreen" class="screen hidden">
+    <div class="machine-title">Pembayaran Tagihan</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div id="billDetail" class="bill-detail"></div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel bill-payment">
+          <h3>Metode Pembayaran</h3>
+
+          <div class="bill-payment-method">
+            <button class="bill-method" data-method="Tunai">Tunai</button>
+            <button class="bill-method" data-method="Transfer">Transfer</button>
+          </div>
+
+          <button id="billFinish" class="bill-finish">
+            Pembayaran Selesai
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- TRANSAKSI BERHASIL -->
+  <section id="successScreen" class="screen hidden success-screen">
+    <div class="success-content">
+      <h2>Transaksi<br>Berhasil</h2>
+      <div class="success-illustration">▤　➜　▥</div>
+      <p>Data transaksi berhasil disimpan.</p>
+      <strong>Update Penjualan</strong>
+
+      <button class="primary-button" id="successHomeButton">
+        Kembali ke Beranda
+      </button>
+    </div>
+  </section>
+
+
+  <!-- LAPORAN UMUM -->
+  <section id="reportScreen" class="screen hidden">
+    <div class="section-pill">Laporan Keuangan Umum</div>
+
+    <div class="screen-layout report-layout">
+
+      <div class="layout-main">
+        <div class="panel report-panel">
+          <h3>Riwayat Transaksi</h3>
+          <div id="transactionList"></div>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="report-total panel">
+          <span>Total Penjualan Umum</span>
+          <strong id="reportTotal">Rp0</strong>
+        </div>
+
+        <div class="panel report-filter">
+          <label for="reportMonth">Bulan laporan</label>
+          <input type="month" id="reportMonth">
+        </div>
+
+        <button class="primary-button" id="reportHomeButton">
+          Kembali ke Beranda
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- LAPORAN TOKO MESIN -->
+  <section id="machineReportScreen" class="screen hidden">
+    <div class="section-pill">Laporan Keuangan Toko Mesin</div>
+
+    <div class="screen-layout report-layout">
+
+      <div class="layout-main">
+        <div class="panel report-panel">
+          <h3>Riwayat Transaksi</h3>
+          <div id="machineTransactionList"></div>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="report-total panel">
+          <span>Total Pemasukan Toko Mesin</span>
+          <strong id="machineReportTotal">Rp0</strong>
+        </div>
+
+        <div class="panel report-filter">
+          <label for="machineReportMonth">Bulan laporan</label>
+          <input type="month" id="machineReportMonth">
+        </div>
+
+        <button class="primary-button" id="machineReportHomeButton">
+          Kembali ke Beranda
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- SUBMENU UPDATE BARANG -->
+  <section id="updateMenuScreen" class="screen hidden">
+    <div class="section-pill">Update Barang</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h2>Pengelolaan Barang</h2>
+          <p>Pilih kegiatan pengelolaan barang yang ingin dilakukan.</p>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="admin-menu">
+          <button id="dataBarangOption">Data Barang</button>
+          <button id="tambahBarangOption">Tambah Barang</button>
+          <button id="dataNotaOption">Data Nota Pembelian</button>
+          <button id="notaPembelianOption">Tambah Nota Pembelian</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DATA BARANG -->
+  <section id="productAdminScreen" class="screen hidden">
+    <div class="section-pill">Data Barang</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h3>Daftar Barang</h3>
+          <div id="adminProductList"></div>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel">
+          <h3>Informasi Barang</h3>
+          <p>Periksa stok dan harga barang yang tersedia di toko.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DATA NOTA PEMBELIAN -->
+  <section id="dataNotaScreen" class="screen hidden">
+    <div class="section-pill">Data Nota Pembelian</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h3>Daftar Nota Pembelian</h3>
+          <div id="receiptList"></div>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel">
+          <h3>Informasi Nota</h3>
+          <p>Periksa dokumentasi nota pembelian yang telah disimpan.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- TAMBAH / EDIT BARANG -->
+  <section id="tambahBarangScreen" class="screen hidden">
+    <div class="section-pill">Tambah Barang</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h2>Data Barang</h2>
+          <p>Masukkan informasi barang yang akan disimpan.</p>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel admin-panel">
+          <h3 id="productFormTitle">Tambah Barang</h3>
+
+          <input type="hidden" id="productId">
+
+          <label for="productName">Nama Barang</label>
+          <input id="productName" type="text" placeholder="Nama barang">
+
+          <label for="productStock">Stok Barang</label>
+          <input
+            id="productStock"
+            type="number"
+            min="0"
+            placeholder="Jumlah stok"
+          >
+
+          <label for="generalPrice">Harga Umum</label>
+          <input
+            id="generalPrice"
+            type="number"
+            min="0"
+            placeholder="Harga umum"
+          >
+
+          <label for="machinePrice">Harga Toko Mesin</label>
+          <input
+            id="machinePrice"
+            type="number"
+            min="0"
+            placeholder="Harga Toko Mesin"
+          >
+
+          <label for="productImage">Foto Barang</label>
+          <input id="productImage" type="file" accept="image/*">
+
+          <button id="saveProductButton" class="primary-button">
+            Simpan Barang
+          </button>
+
+          <button id="cancelProductButton" class="primary-button pale">
+            Batal
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- TAMBAH NOTA PEMBELIAN -->
+  <section id="notaPembelianScreen" class="screen hidden">
+    <div class="section-pill">Tambah Nota Pembelian</div>
+
+    <div class="screen-layout">
+
+      <div class="layout-main">
+        <div class="panel">
+          <h2>Data Nota Pembelian</h2>
+          <p>Masukkan informasi nota pembelian yang akan disimpan.</p>
+        </div>
+      </div>
+
+      <div class="layout-side">
+        <div class="panel admin-panel">
+          <h3>Dokumentasi Nota Pembelian</h3>
+
+          <label for="receiptDate">Tanggal Pembelian</label>
+          <input id="receiptDate" type="date">
+
+          <label for="receiptSupplier">Nama Sales / Pemasok</label>
+          <input
+            id="receiptSupplier"
+            type="text"
+            placeholder="Nama sales atau pemasok"
+          >
+
+          <label for="receiptImage">Foto Nota</label>
+          <input id="receiptImage" type="file" accept="image/*">
+
+          <button id="saveReceiptButton" class="primary-button">
+            Simpan Nota
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- NOTIFIKASI -->
+  <div id="toast" class="toast" role="status"></div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
