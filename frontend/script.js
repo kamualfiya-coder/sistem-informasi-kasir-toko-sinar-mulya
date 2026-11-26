@@ -9,10 +9,10 @@ const $ = (id) => document.getElementById(id);
 
 // Alamat file PHP API.
 const API = {
-    barang: "barang_api.php",
-    transaksi: "transaksi_api.php",
-    login: "login_api.php",
-    nota: "nota_api.php"
+    barang: "http://127.0.0.1:8000/api/barang",
+    transaksi: "http://127.0.0.1:8000/api/transaksi",
+    login: "http://127.0.0.1:8000/api/login",
+    nota: "http://127.0.0.1:8000/api/nota"
 };
 
 
@@ -211,7 +211,7 @@ async function ambilBarangDatabase() {
 async function ambilDataTransaksi() {
     try {
         const hasil = await apiRequest(
-            `${API.transaksi}?action=ringkasan`
+            `${API.transaksi}/ringkasan`
         );
 
         transactions = Array.isArray(hasil.transaksi)
@@ -238,31 +238,33 @@ async function ambilDataTransaksi() {
 // ------------------------------------------------------
 // 2.5. MENGAMBIL DATA NOTA PEMBELIAN
 // ------------------------------------------------------
+// Mengambil data Nota Pembelian dari Laravel.
 
 async function ambilDataNota() {
+
     try {
+
         const hasil = await apiRequest(API.nota);
 
-        const daftarNota = Array.isArray(hasil.data)
-            ? hasil.data
-            : [];
-
-        receipts = daftarNota.map((nota) => ({
-            id: Number(nota.id_nota),
-            date: nota.tanggal_nota,
+        receipts = (hasil.data || []).map((nota) => ({
+            id: nota.id_nota,
             supplier: nota.nama_pemasok,
-            description: nota.keterangan || "",
-            image: nota.lokasi_file || ""
+            date: nota.tanggal_nota,
+            image: nota.lokasi_file
+                ? `http://127.0.0.1:8000/${nota.lokasi_file}`
+                : "",
+            description: nota.keterangan
         }));
 
-        return receipts;
+        return hasil;
 
     } catch (error) {
-        console.error("Gagal mengambil data nota:", error);
+
+        console.error("Gagal mengambil data Nota:", error);
 
         receipts = [];
 
-        return [];
+        return null;
     }
 }
 
@@ -312,7 +314,7 @@ let selectedBillItems = [];
 // ------------------------------------------------------
 
 // Data pengguna yang sedang login.
-let currentUser = null;
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
 
 // Status login pengguna.
 let isAdminLoggedIn = false;
@@ -1708,8 +1710,9 @@ async function completeTransaction() {
     try {
 
         // Mengirim transaksi ke database.
+        // Mengirim transaksi ke database.
         await apiRequest(
-            `${API.transaksi}?action=create`,
+            API.transaksi,
             jsonOptions("POST", dataTransaksi)
         );
 
@@ -1767,6 +1770,12 @@ function renderBillList() {
 
     if (!container) return;
 
+    const countElement = $("billCount");
+
+    if (countElement) {
+        countElement.textContent = bills.length;
+    }
+    
     if (bills.length === 0) {
 
         container.innerHTML =
@@ -2015,7 +2024,7 @@ async function paySelectedBill() {
     try {
 
         await apiRequest(
-            `${API.transaksi}?action=pay-bill`,
+            `${API.transaksi}/pay-bill`,
             jsonOptions("POST", {
                 id_transaksi: Number(bill.id),
                 metode_pembayaran: paymentMethod,
@@ -2278,6 +2287,8 @@ async function loginUser() {
             role: account.role
         };
 
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
         isAdminLoggedIn = isOwner();
 
         if (!isOwner() && !isCashier()) {
@@ -2339,6 +2350,8 @@ async function loginUser() {
 function logoutUser() {
 
     currentUser = null;
+
+    localStorage.removeItem("currentUser");
 
     isAdminLoggedIn = false;
 
@@ -2562,7 +2575,8 @@ function editProduct(productId) {
 // ------------------------------------------------------
 
 async function saveProduct() {
-
+    console.count("JUMLAH SAVE PRODUCT");
+    
     if (!pastikanPemilik()) return;
 
 
@@ -2664,7 +2678,7 @@ async function saveProduct() {
                 : "Barang berhasil ditambahkan."
         );
 
-        showScreen("productAdminScreen");
+        showScreen("updateMenuScreen");
 
         renderAdminProducts();
 
@@ -2810,6 +2824,7 @@ function renderReceipts() {
 // ------------------------------------------------------
 
 async function saveReceipt() {
+    console.log("FUNGSI SAVE RECEIPT DIJALANKAN");
 
     if (!pastikanPemilik()) return;
 
@@ -2853,10 +2868,14 @@ async function saveReceipt() {
 
     try {
 
-        await apiRequest(API.nota, {
+        console.log("1. MULAI MENGIRIM DATA KE API");
+
+        const hasilSimpan = await apiRequest(API.nota, {
             method: "POST",
             body: formData
         });
+
+        console.log("2. RESPONS API:", hasilSimpan);
 
 
         await ambilDataNota();
@@ -2880,7 +2899,7 @@ async function saveReceipt() {
 
         renderReceipts();
 
-        showScreen("dataNotaScreen");
+        showScreen("updateMenuScreen");
 
         showToast("Nota pembelian berhasil disimpan.");
 
@@ -2956,14 +2975,6 @@ $("notaPembelianOption")?.addEventListener("click", () => {
 });
 
 
-// SIMPAN BARANG
-$("saveProductButton")?.addEventListener("click", () => {
-
-    saveProduct();
-
-});
-
-
 // BATAL TAMBAH / EDIT BARANG
 $("cancelProductButton")?.addEventListener("click", () => {
 
@@ -2975,10 +2986,16 @@ $("cancelProductButton")?.addEventListener("click", () => {
 
 
 // SIMPAN NOTA PEMBELIAN
-$("saveReceiptButton")?.addEventListener("click", () => {
+$("saveReceiptButton")?.addEventListener("click", function () {
+    console.log("1. TOMBOL NOTA DIKLIK");
+
+    alert("Tombol Simpan Nota terdeteksi!");
+
+    console.log("2. SEBELUM MEMANGGIL SAVE RECEIPT");
 
     saveReceipt();
 
+    console.log("3. SETELAH MEMANGGIL SAVE RECEIPT");
 });
 
 // ------------------------------------------------------
@@ -3283,8 +3300,10 @@ $("addProductButton")?.addEventListener("click", () => {
 });
 
 
-$("saveProductButton")?.addEventListener("click", saveProduct);
-
+$("saveProductButton")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    saveProduct();
+});
 
 $("cancelProductButton")?.addEventListener("click", () => {
 
@@ -3327,47 +3346,65 @@ $("saveReceiptButton")?.addEventListener("click", saveReceipt);
 // 10.19. INISIALISASI APLIKASI
 // ------------------------------------------------------
 
+
 async function initApp() {
 
-    // Mengatur tanggal awal.
     selectedTransactionDate = getToday();
 
-    // Mengatur tampilan hak akses.
     perbaruiHakAkses();
 
-    // Menampilkan halaman login.
-    showScreen("adminLoginScreen");
-
-    // Memuat data awal dari database.
-    try {
-
-        await Promise.all([
-            ambilBarangDatabase(),
-            ambilDataTransaksi(),
-            ambilDataNota()
-        ]);
-
-        renderCatalog();
-        renderCart();
-        refreshReports();
-
-    } catch (error) {
-
-        console.error("Gagal memuat data awal:", error);
-
+    // Memeriksa akun yang tersimpan.
+    if (currentUser) {
+        if (isOwner()) {
+            showScreen("homeScreenAdmin");
+        } else if (isCashier()) {
+            showScreen("homeScreenKasir");
+        } else {
+            currentUser = null;
+            localStorage.removeItem("currentUser");
+            showScreen("adminLoginScreen");
+        }
+    } else {
+        showScreen("adminLoginScreen");
     }
 
-    // Mengatur grafik ketika ukuran layar berubah.
-    window.addEventListener("resize", () => {
+    // Memuat data awal dari database.
+    const hasil = await Promise.allSettled([
+        ambilBarangDatabase(),
+        ambilDataTransaksi(),
+        ambilDataNota()
+    ]);
 
+    hasil.forEach((item, index) => {
+        if (item.status === "rejected") {
+            console.error("Gagal memuat data:", item.reason);
+        }
+    });
+
+    renderCatalog();
+    renderCart();
+    refreshReports();
+
+    if (currentUser) {
+        renderHome();
+    }
+
+    window.addEventListener("resize", () => {
         if (currentUser) {
             renderHome();
         }
-
     });
-
 }
 
 
 // Menjalankan aplikasi setelah halaman selesai dimuat.
 document.addEventListener("DOMContentLoaded", initApp);
+
+document.addEventListener("click", function(event) {
+    if (
+        event.target.id === "saveProductButton" ||
+        event.target.id === "saveReceiptButton"
+    ) {
+        console.log("TOMBOL SIMPAN DIKLIK:", event.target.id);
+    }
+});

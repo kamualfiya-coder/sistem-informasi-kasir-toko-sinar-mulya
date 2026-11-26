@@ -879,7 +879,7 @@ textarea {
   width: 100%;
   padding: 15px;
   background: var(--blue-light);
-  color: var(--blue);
+  color: #208257;
   border-radius: 11px;
   font-weight: bold;
   text-align: left;

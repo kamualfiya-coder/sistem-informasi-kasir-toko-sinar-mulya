@@ -1,3 +1,5 @@
 /backend/.env
 /backend/tidb-ca.pem
 /backend_lama/
+/public/uploads/
+/backend/public/uploads/
