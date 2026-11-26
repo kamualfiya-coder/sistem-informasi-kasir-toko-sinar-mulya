@@ -30,3 +30,14 @@ Route::post('/nota', [NotaController::class, 'store']);
 Route::get('/transaksi/ringkasan', [TransaksiController::class, 'ringkasan']);
 Route::post('/transaksi', [TransaksiController::class, 'store']);
 Route::post('/transaksi/pay-bill', [TransaksiController::class, 'payBill']);
+
+Route::get('/cek-ssl', function () {
+    $path = env('MYSQL_ATTR_SSL_CA');
+
+    return response()->json([
+        'ca_path_terisi' => !empty($path),
+        'file_ada' => $path ? file_exists($path) : false,
+        'file_bisa_dibaca' => $path ? is_readable($path) : false,
+        'isi_sertifikat_ada' => !empty(env('MYSQL_CA_CONTENT')),
+    ]);
+});

@@ -32,4 +32,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD ["apache2-foreground"]
+CMD ["sh", "-c", "printf '%s' \"$MYSQL_CA_CONTENT\" > /etc/ssl/certs/tidb-ca.pem && chmod 644 /etc/ssl/certs/tidb-ca.pem && export MYSQL_ATTR_SSL_CA=/etc/ssl/certs/tidb-ca.pem && exec apache2-foreground"]
