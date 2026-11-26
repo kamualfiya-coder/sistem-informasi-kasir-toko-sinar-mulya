@@ -16,7 +16,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY backend/ /var/www/html/
 
 # Salin sertifikat SSL TiDB
-COPY backend/tidb-ca.pem /etc/ssl/certs/tidb-ca.pem
+
 
 # Atur Apache agar membuka folder public Laravel
 RUN sed -i 's/Listen 80/Listen 10000/' /etc/apache2/ports.conf \
