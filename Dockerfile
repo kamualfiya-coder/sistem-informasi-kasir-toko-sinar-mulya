@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libzip-dev \
     unzip \
+    ca-certificates \
     && docker-php-ext-install pdo_mysql intl zip \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
@@ -32,4 +33,4 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "printf '%s' \"$MYSQL_CA_CONTENT\" > /etc/ssl/certs/tidb-ca.pem && chmod 644 /etc/ssl/certs/tidb-ca.pem && export MYSQL_ATTR_SSL_CA=/etc/ssl/certs/tidb-ca.pem && exec apache2-foreground"]
+CMD ["apache2-foreground"]
