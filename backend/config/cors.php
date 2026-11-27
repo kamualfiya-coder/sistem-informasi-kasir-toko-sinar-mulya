@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://tokosinarmulya.netlify.app'],
+    'allowed_origins' => ['https://sistem-informasi-kasir-toko-sinar-mulya-2m6u.netlify.app'],
 
     'allowed_origins_patterns' => [],
 
