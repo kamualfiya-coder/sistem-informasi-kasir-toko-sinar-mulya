@@ -20,6 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+        'https://sistem-informasi-kasir-toko-sinar-mulya.pages.dev',
         'https://sistem-informasi-kasir-toko-sinar-mulya-2m6u.netlify.app',
         'http://127.0.0.1:5500',
         'http://localhost:5500',
