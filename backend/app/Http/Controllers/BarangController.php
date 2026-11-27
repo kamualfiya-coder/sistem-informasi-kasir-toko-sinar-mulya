@@ -15,7 +15,10 @@ class BarangController extends Controller
                 ->orderByDesc('id_barang')
                 ->get()
                 ->map(function ($item) {
-                    if ($item->gambar) {
+                    if (
+                        $item->gambar &&
+                        !preg_match('/^https?:\/\//i', $item->gambar)
+                    ) {
                         $item->gambar = asset($item->gambar);
                     }
 
@@ -117,47 +120,28 @@ class BarangController extends Controller
             $data['gambar'] = null;
         }
 
-        // Upload gambar jika ada
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
+        
+        // Menyimpan URL gambar jika diisi
+        $gambar = trim((string) $request->input('gambar', ''));
 
-            if (!$file->isValid() || $file->getSize() > 5 * 1024 * 1024) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gambar gagal diunggah atau melebihi 5 MB'
-                ], 400);
-            }
-
-            $mime = $file->getMimeType();
-
-            $format = [
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/webp' => 'webp'
-            ];
+        if ($gambar !== '') {
+            $urlValid = filter_var($gambar, FILTER_VALIDATE_URL);
+            $protokol = parse_url($gambar, PHP_URL_SCHEME);
 
             if (
-                !isset($format[$mime]) ||
-                @getimagesize($file->getRealPath()) === false
+                !$urlValid ||
+                !in_array(strtolower($protokol ?? ''), ['http', 'https']) ||
+                strlen($gambar) > 255
             ) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Format gambar harus JPG, PNG, atau WEBP'
+                    'message' => 'URL gambar tidak valid atau terlalu panjang'
                 ], 400);
             }
 
-            $namaFile = uniqid('barang_', true) . '.' . $format[$mime];
-
-            $folder = public_path('uploads/barang');
-
-            if (!is_dir($folder)) {
-                mkdir($folder, 0755, true);
-            }
-
-            $file->move($folder, $namaFile);
-
-            $data['gambar'] = 'uploads/barang/' . $namaFile;
+            $data['gambar'] = $gambar;
         }
+
 
         try {
             if ($aksi === 'edit') {
