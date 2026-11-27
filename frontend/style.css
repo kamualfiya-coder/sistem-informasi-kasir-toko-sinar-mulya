@@ -949,104 +949,92 @@ textarea {
    13. NOTA PEMBELIAN
 ===================================================== */
 
+/* TABEL DATA NOTA PEMBELIAN */
 #receiptList {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    width: 100%;
 }
-.receipt-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 18px 20px;
+
+#dataNotaScreen .panel {
+    border-radius: 16px;
+    padding: 22px;
+}
+
+#dataNotaScreen .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#dataNotaScreen .data-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
     background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
 }
 
-.receipt-item strong {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text);
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.receipt-item p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.receipt-item a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 11px 17px;
+#dataNotaScreen .data-table th {
+    padding: 14px 16px;
     background: var(--blue-light);
     color: var(--blue);
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-.receipt-item a:hover {
-    background: var(--blue);
-    color: var(--white);
-}
-
-.receipt-item img {
-    display: block;
-    width: 100%;
-    max-width: 300px;
-    max-height: 250px;
-    object-fit: contain;
-    margin-top: 12px;
-    border-radius: 10px;
-}
-
-/* Panel daftar nota */
-#dataNotaScreen .layout-main .panel {
-    border-radius: 16px;
-    padding: 22px;
-}
-
-/* Panel informasi nota */
-#dataNotaScreen .layout-side .panel {
-    border-radius: 16px;
-    padding: 22px;
-    background: linear-gradient(
-        145deg,
-        var(--white),
-        var(--blue-light)
-    );
-}
-
-#dataNotaScreen .layout-side .panel h3 {
-    color: var(--blue);
-    font-size: 17px;
-    margin-bottom: 12px;
-}
-
-#dataNotaScreen .layout-side .panel p {
-    color: var(--muted);
+    text-align: left;
     font-size: 13px;
-    line-height: 1.7;
+    white-space: nowrap;
 }
 
+#dataNotaScreen .data-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    vertical-align: top;
+}
+
+#dataNotaScreen .data-table td div {
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+#dataNotaScreen .data-table td a {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#dataNotaScreen .data-table td a:hover {
+    text-decoration: underline;
+}
+
+/* TOMBOL AKSI */
+#dataNotaScreen .edit-receipt-button,
+#dataNotaScreen .delete-receipt-button {
+    padding: 8px 13px;
+    margin: 2px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#dataNotaScreen .edit-receipt-button {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+#dataNotaScreen .delete-receipt-button {
+    background: #fde8e8;
+    color: #c0392b;
+}
+
+/* TAMPILAN HP */
 @media (max-width: 600px) {
-    .receipt-item {
-        align-items: flex-start;
-        flex-direction: column;
+    #dataNotaScreen .panel {
+        padding: 14px;
     }
 
-    .receipt-item a {
-        width: 100%;
+    #dataNotaScreen .data-table {
+        min-width: 750px;
     }
 }
 

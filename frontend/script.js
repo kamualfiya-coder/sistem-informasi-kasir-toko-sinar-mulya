@@ -153,6 +153,7 @@ let bills = [];
 
 // Data nota pembelian.
 let receipts = [];
+let editingReceiptId = null;
 
 
 // ------------------------------------------------------
@@ -2775,7 +2776,6 @@ async function deleteProduct(productId) {
 // 10.8. MENAMPILKAN DATA NOTA PEMBELIAN
 // ------------------------------------------------------
 
-
 function renderReceipts() {
     const container = $("receiptList");
     if (!container) return;
@@ -2786,56 +2786,115 @@ function renderReceipts() {
         return;
     }
 
-    container.innerHTML = receipts.map((receipt) => {
-        const daftarBarang = (receipt.items || []).map((item) => `
-            <div class="receipt-detail-item">
-                <strong>${escapeHTML(item.name)}</strong>
-                <p>
-                    ${item.quantity} ×
-                    Rp${Number(item.unit_price).toLocaleString("id-ID")}
-                </p>
-                <p>
-                    Subtotal:
-                    <strong>Rp${Number(item.total).toLocaleString("id-ID")}</strong>
-                </p>
-            </div>
-        `).join("");
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Sales / Pemasok</th>
+                        <th>Rincian Barang</th>
+                        <th>Total Pembelian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${receipts.map((receipt) => {
+                        const daftarBarang = (receipt.items || []).map(item => `
+                            <div>
+                                ${escapeHTML(item.name)}
+                                (${item.quantity} × Rp${Number(item.unit_price).toLocaleString("id-ID")})
+                            </div>
+                        `).join("");
 
-        return `
-            <div class="receipt-item">
-                <div>
-                    <strong>${escapeHTML(receipt.supplier)}</strong>
-                    <p>Tanggal: ${formatTanggal(receipt.date)}</p>
-                </div>
-
-                ${receipt.items?.length ? `
-                    <div class="receipt-detail-list">
-                        ${daftarBarang}
-                    </div>
-                    <p>
-                        <strong>Total Pembelian:
-                        Rp${Number(receipt.grandTotal).toLocaleString("id-ID")}
-                        </strong>
-                    </p>
-                ` : ""}
-
-                ${receipt.description ? `
-                    <p>${escapeHTML(receipt.description)}</p>
-                ` : ""}
-
-                ${receipt.image ? `
-                    <a href="${escapeHTML(receipt.image)}"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                       Lihat Nota Lama
-                    </a>
-                ` : ""}
-            </div>
-        `;
-    }).join("");
+                        return `
+                            <tr>
+                                <td>${formatTanggal(receipt.date)}</td>
+                                <td>${escapeHTML(receipt.supplier)}</td>
+                                <td>
+                                    ${daftarBarang || escapeHTML(receipt.description || "-")}
+                                    ${receipt.image ? `
+                                        <a href="${escapeHTML(receipt.image)}"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            Lihat Nota Lama
+                                        </a>
+                                    ` : ""}
+                                </td>
+                                <td>
+                                    <strong>
+                                        Rp${Number(receipt.grandTotal || 0).toLocaleString("id-ID")}
+                                    </strong>
+                                </td>
+                                <td>
+                                    <button type="button"
+                                        class="edit-receipt-button"
+                                        data-id="${receipt.id}">
+                                        Edit
+                                    </button>
+                                    <button type="button"
+                                        class="delete-receipt-button"
+                                        data-id="${receipt.id}">
+                                        Hapus
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+            </table>
+        </div>
+    `;
 }
 
+// EDIT NOTA PEMBELIAN
+function editReceipt(id) {
+    const receipt = receipts.find(
+        (item) => String(item.id) === String(id)
+    );
 
+    if (!receipt) {
+        showToast("Nota tidak ditemukan.");
+        return;
+    }
+
+    editingReceiptId = receipt.id;
+
+    // Isi tanggal dan pemasok
+    $("receiptDate").value = receipt.date;
+    $("receiptSupplier").value = receipt.supplier;
+
+    // Kosongkan rincian barang sebelumnya
+    $("receiptItems").innerHTML = "";
+
+    // Masukkan kembali rincian barang nota
+    (receipt.items || []).forEach((item) => {
+        tambahBarisBarangNota();
+
+        const baris = $("receiptItems").lastElementChild;
+
+        baris.querySelector(".receipt-item-name").value = item.name;
+        baris.querySelector(".receipt-item-quantity").value = item.quantity;
+        baris.querySelector(".receipt-item-price").value = item.unit_price;
+    });
+
+    hitungTotalNota();
+
+    // Ubah tulisan tombol
+    $("saveReceiptButton").textContent = "Simpan Perubahan";
+
+    // Buka formulir nota
+    showScreen("notaPembelianScreen");
+}
+
+// Event tombol Edit
+$("receiptList")?.addEventListener("click", (event) => {
+    const tombolEdit = event.target.closest(".edit-receipt-button");
+
+    if (tombolEdit) {
+        editReceipt(tombolEdit.dataset.id);
+    }
+});
 
 // ------------------------------------------------------
 // 10.9. MENYIMPAN NOTA PEMBELIAN
@@ -2920,6 +2979,7 @@ async function saveReceipt() {
     }
 
     const grandTotal = items.reduce((total, item) => total + item.total, 0);
+    const sedangEdit = editingReceiptId !== null;
 
     const formData = new FormData();
     formData.append("tanggal_nota", tanggal);
@@ -2929,11 +2989,20 @@ async function saveReceipt() {
         grand_total: grandTotal
     }));
 
+    // Laravel menggunakan method spoofing untuk PUT dengan FormData
+    if (sedangEdit) {
+        formData.append("_method", "PUT");
+    }
+
     const saveButton = $("saveReceiptButton");
     if (saveButton) saveButton.disabled = true;
 
     try {
-        const hasilSimpan = await apiRequest(API.nota, {
+        const url = sedangEdit
+            ? `${API.nota}/${editingReceiptId}`
+            : API.nota;
+
+        const hasilSimpan = await apiRequest(url, {
             method: "POST",
             body: formData
         });
@@ -2942,15 +3011,23 @@ async function saveReceipt() {
 
         await ambilDataNota();
 
+        editingReceiptId = null;
+        $("saveReceiptButton").textContent = "Simpan Nota";
+
         $("receiptDate").value = "";
         $("receiptSupplier").value = "";
         $("receiptItems").innerHTML = "";
 
         hitungTotalNota();
-
         renderReceipts();
+
         showScreen("updateMenuScreen");
-        showToast("Nota pembelian berhasil disimpan.");
+
+        showToast(
+            sedangEdit
+                ? "Nota pembelian berhasil diperbarui."
+                : "Nota pembelian berhasil disimpan."
+        );
 
     } catch (error) {
         console.error("Gagal menyimpan nota:", error);
@@ -2960,6 +3037,38 @@ async function saveReceipt() {
     }
 }
 
+// HAPUS NOTA PEMBELIAN
+async function deleteReceipt(id) {
+    if (!pastikanPemilik()) return;
+
+    if (!confirm("Yakin ingin menghapus nota pembelian ini?")) {
+        return;
+    }
+
+    try {
+        await apiRequest(`${API.nota}/${id}`, {
+            method: "DELETE"
+        });
+
+        await ambilDataNota();
+        renderReceipts();
+
+        showToast("Nota pembelian berhasil dihapus.");
+
+    } catch (error) {
+        console.error("Gagal menghapus nota:", error);
+        showToast(error.message || "Nota gagal dihapus.");
+    }
+}
+
+// Event tombol Hapus
+$("receiptList")?.addEventListener("click", (event) => {
+    const tombolHapus = event.target.closest(".delete-receipt-button");
+
+    if (tombolHapus) {
+        deleteReceipt(tombolHapus.dataset.id);
+    }
+});
 
 // ------------------------------------------------------
 // 10.10. EVENT LISTENER UPDATE BARANG
