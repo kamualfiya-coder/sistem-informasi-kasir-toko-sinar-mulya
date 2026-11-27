@@ -9,10 +9,10 @@ const $ = (id) => document.getElementById(id);
 
 // Alamat file PHP API.
 const API = {
-    barang: "http://127.0.0.1:8000/api/barang",
-    transaksi: "http://127.0.0.1:8000/api/transaksi",
-    login: "http://127.0.0.1:8000/api/login",
-    nota: "http://127.0.0.1:8000/api/nota"
+    barang: "https://toko-sinar-mulya.dockhosting.cloud/api/barang",
+    transaksi: "https://toko-sinar-mulya.dockhosting.cloud/api/transaksi",
+    login: "https://toko-sinar-mulya.dockhosting.cloud/api/login",
+    nota: "https://toko-sinar-mulya.dockhosting.cloud/api/nota"
 };
 
 
