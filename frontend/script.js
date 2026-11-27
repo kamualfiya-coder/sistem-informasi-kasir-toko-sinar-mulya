@@ -240,33 +240,45 @@ async function ambilDataTransaksi() {
 // ------------------------------------------------------
 // Mengambil data Nota Pembelian dari Laravel.
 
+
 async function ambilDataNota() {
-
     try {
-
         const hasil = await apiRequest(API.nota);
 
-        receipts = (hasil.data || []).map((nota) => ({
-            id: nota.id_nota,
-            supplier: nota.nama_pemasok,
-            date: nota.tanggal_nota,
-            image: nota.lokasi_file
-                ? `http://127.0.0.1:8000/${nota.lokasi_file}`
-                : "",
-            description: nota.keterangan
-        }));
+        receipts = (hasil.data || []).map((nota) => {
+            let rincian = null;
+
+            try {
+                rincian = nota.keterangan
+                    ? JSON.parse(nota.keterangan)
+                    : null;
+            } catch (error) {
+                // Nota lama mungkin berisi keterangan teks biasa
+                rincian = null;
+            }
+
+            return {
+                id: nota.id_nota,
+                supplier: nota.nama_pemasok,
+                date: nota.tanggal_nota,
+                image: nota.lokasi_file
+                    ? `http://127.0.0.1:8000/${nota.lokasi_file}`
+                    : "",
+                description: rincian ? "" : nota.keterangan,
+                items: rincian?.items || [],
+                grandTotal: rincian?.grand_total || 0
+            };
+        });
 
         return hasil;
 
     } catch (error) {
-
         console.error("Gagal mengambil data Nota:", error);
-
         receipts = [];
-
         return null;
     }
 }
+
 
 // ======================================================
 // BAGIAN 3. VARIABEL APLIKASI DAN HAK AKSES
@@ -2592,7 +2604,7 @@ async function saveProduct() {
 
     const hargaMesin = $("machinePrice")?.value;
 
-    const gambar = $("productImage")?.files[0];
+    const gambar = $("productImage")?.value.trim() || "";
 
 
     if (!nama || stok === "" || hargaUmum === "" || hargaMesin === "") {
@@ -2763,163 +2775,191 @@ async function deleteProduct(productId) {
 // 10.8. MENAMPILKAN DATA NOTA PEMBELIAN
 // ------------------------------------------------------
 
+
 function renderReceipts() {
-
     const container = $("receiptList");
-
     if (!container) return;
-
     if (!isOwner()) return;
 
-
     if (receipts.length === 0) {
-
-        container.innerHTML =
-            "<p>Belum ada nota pembelian.</p>";
-
+        container.innerHTML = "<p>Belum ada nota pembelian.</p>";
         return;
     }
 
-
     container.innerHTML = receipts.map((receipt) => {
+        const daftarBarang = (receipt.items || []).map((item) => `
+            <div class="receipt-detail-item">
+                <strong>${escapeHTML(item.name)}</strong>
+                <p>
+                    ${item.quantity} ×
+                    Rp${Number(item.unit_price).toLocaleString("id-ID")}
+                </p>
+                <p>
+                    Subtotal:
+                    <strong>Rp${Number(item.total).toLocaleString("id-ID")}</strong>
+                </p>
+            </div>
+        `).join("");
 
         return `
             <div class="receipt-item">
-
                 <div>
-                    <strong>
-                        ${escapeHTML(receipt.supplier)}
-                    </strong>
-
-                    <p>
-                        Tanggal: ${formatTanggal(receipt.date)}
-                    </p>
-
+                    <strong>${escapeHTML(receipt.supplier)}</strong>
+                    <p>Tanggal: ${formatTanggal(receipt.date)}</p>
                 </div>
 
-                ${
-                    receipt.image
-                        ? `
-                            <a
-                                href="${escapeHTML(receipt.image)}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Lihat Nota
-                            </a>
-                        `
-                        : ""
-                }
+                ${receipt.items?.length ? `
+                    <div class="receipt-detail-list">
+                        ${daftarBarang}
+                    </div>
+                    <p>
+                        <strong>Total Pembelian:
+                        Rp${Number(receipt.grandTotal).toLocaleString("id-ID")}
+                        </strong>
+                    </p>
+                ` : ""}
 
+                ${receipt.description ? `
+                    <p>${escapeHTML(receipt.description)}</p>
+                ` : ""}
+
+                ${receipt.image ? `
+                    <a href="${escapeHTML(receipt.image)}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                       Lihat Nota Lama
+                    </a>
+                ` : ""}
             </div>
         `;
-
     }).join("");
-
 }
+
 
 
 // ------------------------------------------------------
 // 10.9. MENYIMPAN NOTA PEMBELIAN
 // ------------------------------------------------------
+// TAMBAH BARIS BARANG NOTA
+function tambahBarisBarangNota() {
+    const container = $("receiptItems");
+    if (!container) return;
+
+    const baris = document.createElement("div");
+    baris.className = "receipt-item-form";
+
+    baris.innerHTML = `
+        <label>Nama Barang</label>
+        <input type="text" class="receipt-item-name"
+            placeholder="Nama barang">
+
+        <label>Jumlah</label>
+        <input type="number" class="receipt-item-quantity"
+            min="1" value="1">
+
+        <label>Harga Satuan</label>
+        <input type="number" class="receipt-item-price"
+            min="0" value="0">
+
+        <p>Total: <strong class="receipt-item-total">Rp0</strong></p>
+
+        <button type="button" class="remove-receipt-item">
+            Hapus Barang
+        </button>
+    `;
+
+    container.appendChild(baris);
+    hitungTotalNota();
+}
+
+// HITUNG TOTAL NOTA
+function hitungTotalNota() {
+    let grandTotal = 0;
+
+    document.querySelectorAll(".receipt-item-form").forEach((baris) => {
+        const jumlah = Number(baris.querySelector(".receipt-item-quantity").value) || 0;
+        const harga = Number(baris.querySelector(".receipt-item-price").value) || 0;
+
+        const total = jumlah * harga;
+        grandTotal += total;
+
+        baris.querySelector(".receipt-item-total").textContent =
+            "Rp" + total.toLocaleString("id-ID");
+    });
+
+    $("receiptGrandTotal").textContent =
+        "Rp" + grandTotal.toLocaleString("id-ID");
+}
 
 async function saveReceipt() {
-    console.log("FUNGSI SAVE RECEIPT DIJALANKAN");
-
     if (!pastikanPemilik()) return;
 
-
     const tanggal = $("receiptDate")?.value;
-
     const pemasok = $("receiptSupplier")?.value.trim();
 
-    const keterangan = $("receiptDescription")?.value.trim();
+    const items = [];
 
-    const gambar = $("receiptImage")?.files[0];
+    document.querySelectorAll(".receipt-item-form").forEach((baris) => {
+        const nama = baris.querySelector(".receipt-item-name")?.value.trim();
+        const jumlah = Number(baris.querySelector(".receipt-item-quantity")?.value);
+        const harga = Number(baris.querySelector(".receipt-item-price")?.value);
 
+        if (nama && jumlah > 0 && harga >= 0) {
+            items.push({
+                name: nama,
+                quantity: jumlah,
+                unit_price: harga,
+                total: jumlah * harga
+            });
+        }
+    });
 
-    if (!tanggal || !pemasok || !gambar) {
-
-        showToast(
-            "Tanggal, pemasok, dan gambar nota wajib diisi."
-        );
-
+    if (!tanggal || !pemasok || items.length === 0) {
+        showToast("Tanggal, pemasok, dan minimal satu barang wajib diisi.");
         return;
     }
 
+    const grandTotal = items.reduce((total, item) => total + item.total, 0);
 
     const formData = new FormData();
-
     formData.append("tanggal_nota", tanggal);
-
     formData.append("nama_pemasok", pemasok);
-
-    formData.append("keterangan", keterangan);
-
-    formData.append("gambar", gambar);
-
+    formData.append("keterangan", JSON.stringify({
+        items: items,
+        grand_total: grandTotal
+    }));
 
     const saveButton = $("saveReceiptButton");
-
-    if (saveButton) {
-        saveButton.disabled = true;
-    }
-
+    if (saveButton) saveButton.disabled = true;
 
     try {
-
-        console.log("1. MULAI MENGIRIM DATA KE API");
-
         const hasilSimpan = await apiRequest(API.nota, {
             method: "POST",
             body: formData
         });
 
-        console.log("2. RESPONS API:", hasilSimpan);
-
+        console.log("Nota berhasil disimpan:", hasilSimpan);
 
         await ambilDataNota();
 
-        if ($("receiptDate")) {
-            $("receiptDate").value = "";
-        }
+        $("receiptDate").value = "";
+        $("receiptSupplier").value = "";
+        $("receiptItems").innerHTML = "";
 
-        if ($("receiptSupplier")) {
-            $("receiptSupplier").value = "";
-        }
-
-        if ($("receiptDescription")) {
-            $("receiptDescription").value = "";
-        }
-
-        if ($("receiptImage")) {
-            $("receiptImage").value = "";
-        }
-
+        hitungTotalNota();
 
         renderReceipts();
-
         showScreen("updateMenuScreen");
-
         showToast("Nota pembelian berhasil disimpan.");
 
     } catch (error) {
-
         console.error("Gagal menyimpan nota:", error);
-
-        showToast(
-            error.message || "Nota pembelian gagal disimpan."
-        );
-
+        showToast(error.message || "Nota pembelian gagal disimpan.");
     } finally {
-
-        if (saveButton) {
-            saveButton.disabled = false;
-        }
-
+        if (saveButton) saveButton.disabled = false;
     }
-
 }
+
 
 // ------------------------------------------------------
 // 10.10. EVENT LISTENER UPDATE BARANG
@@ -2984,6 +3024,28 @@ $("cancelProductButton")?.addEventListener("click", () => {
 
 });
 
+// TOMBOL TAMBAH BARANG NOTA
+$("addReceiptItemButton")?.addEventListener("click", () => {
+    tambahBarisBarangNota();
+});
+
+// HITUNG ULANG SAAT JUMLAH ATAU HARGA BERUBAH
+$("receiptItems")?.addEventListener("input", (event) => {
+    if (
+        event.target.classList.contains("receipt-item-quantity") ||
+        event.target.classList.contains("receipt-item-price")
+    ) {
+        hitungTotalNota();
+    }
+});
+
+// HAPUS BARIS BARANG
+$("receiptItems")?.addEventListener("click", (event) => {
+    if (event.target.classList.contains("remove-receipt-item")) {
+        event.target.closest(".receipt-item-form")?.remove();
+        hitungTotalNota();
+    }
+});
 
 // SIMPAN NOTA PEMBELIAN
 $("saveReceiptButton")?.addEventListener("click", function () {

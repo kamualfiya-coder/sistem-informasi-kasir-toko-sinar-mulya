@@ -545,9 +545,12 @@
             placeholder="Harga Toko Mesin"
           >
 
-          <label for="productImage">Foto Barang</label>
-          <input id="productImage" type="file" accept="image/*">
-
+          <label for="productImage">URL Foto Barang</label>
+          <input
+              id="productImage"
+              type="url"
+              placeholder="https://contoh.com/gambar.png"
+          >
           <button type="button" id="saveProductButton" class="primary-button">
               Simpan Barang
           </button>
@@ -578,23 +581,41 @@
 
       <div class="layout-side">
         <div class="panel admin-panel">
-          <h3>Dokumentasi Nota Pembelian</h3>
+          <h3>Informasi Nota Pembelian</h3>
 
           <label for="receiptDate">Tanggal Pembelian</label>
           <input id="receiptDate" type="date">
 
           <label for="receiptSupplier">Nama Sales / Pemasok</label>
           <input
-            id="receiptSupplier"
-            type="text"
-            placeholder="Nama sales atau pemasok"
+              id="receiptSupplier"
+              type="text"
+              placeholder="Nama sales atau pemasok"
           >
 
-          <label for="receiptImage">Foto Nota</label>
-          <input id="receiptImage" type="file" accept="image/*">
+          <h3>Daftar Barang</h3>
 
-          <button type=button id="saveReceiptButton" class="primary-button">
-            Simpan Nota
+          <div id="receiptItems"></div>
+
+          <button
+              type="button"
+              id="addReceiptItemButton"
+              class="primary-button pale"
+          >
+              + Tambah Barang
+          </button>
+
+          <div class="receipt-total">
+              <strong>Total Pembelian:</strong>
+              <strong id="receiptGrandTotal">Rp0</strong>
+          </div>
+
+          <button
+              type="button"
+              id="saveReceiptButton"
+              class="primary-button"
+          >
+              Simpan Nota
           </button>
 
         </div>
