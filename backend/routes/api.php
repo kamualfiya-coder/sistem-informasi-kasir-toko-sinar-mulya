@@ -25,6 +25,8 @@ Route::post('/login', [LoginController::class, 'login']);
 // API Nota Pembelian
 Route::get('/nota', [NotaController::class, 'index']);
 Route::post('/nota', [NotaController::class, 'store']);
+Route::put('/nota/{id}', [NotaController::class, 'update']);
+Route::delete('/nota/{id}', [NotaController::class, 'destroy']);
 
 // API Transaksi
 Route::get('/transaksi/ringkasan', [TransaksiController::class, 'ringkasan']);
