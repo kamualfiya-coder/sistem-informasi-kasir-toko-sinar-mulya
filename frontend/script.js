@@ -2143,7 +2143,15 @@ function renderReport(jenis) {
         bulanTahun
     );
 
-    const totalPemasukan = hitungPemasukan(dataBulanan);
+    const tanggalHariIni = sekarang.getFullYear() + "-" +
+    String(sekarang.getMonth() + 1).padStart(2, "0") + "-" +
+    String(sekarang.getDate()).padStart(2, "0");
+
+    const dataHariIni = dataBulanan.filter((pembayaran) => {
+        return ambilTanggalPembayaran(pembayaran) === tanggalHariIni;
+    });
+
+    const totalPemasukan = hitungPemasukan(dataHariIni);
 
     totalElement.textContent = rupiah(totalPemasukan);
 
